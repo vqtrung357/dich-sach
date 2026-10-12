@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bột Dịch Sách — Bảng Điều Khiển Cục Bộ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-logo">🥖</span>
+        <div class="brand-text">
+          <h1>BỘT</h1>
+          <p>Mở rộng tri thức</p>
+        </div>
+      </div>
+      
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dashboard-tab">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-item" data-tab="translate-tab">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+          Dịch thuật
+        </button>
+        <button class="nav-item" data-tab="qa-tab">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12zm-9-9h2v2h-2zm0 4h2v2h-2z"/></svg>
+          Đọc & Sửa lỗi QA
+        </button>
+        <button class="nav-item" data-tab="publish-tab">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3zm-5.5-8h-3v3H7l5 5 5-5h-3.5z"/></svg>
+          Xuất bản & Git
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="status-indicator online">
+          <span class="status-dot"></span>
+          <span class="status-label">Local Server Online</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top header -->
+      <header class="top-header">
+        <div class="header-title">
+          <h2 id="current-tab-title">Dashboard</h2>
+          <p id="current-tab-desc">Tổng quan tiến độ sách dịch và onboarding</p>
+        </div>
+        <div class="header-actions">
+          <div class="book-selector-container">
+            <label for="global-book-select">Sách hiện tại:</label>
+            <select id="global-book-select">
+              <option value="">Đang tải...</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD -->
+      <section id="dashboard-tab" class="tab-panel active">
+        <div class="dashboard-grid">
+          <!-- Left Column: Books and Chapters status -->
+          <div class="card col-2">
+            <div class="card-header">
+              <h3>Danh sách Chương & Tiến trình</h3>
+              <span class="badge" id="chapters-count">0 Chương</span>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="progress-table">
+                  <thead>
+                    <tr>
+                      <th>Chương</th>
+                      <th>Thu thập</th>
+                      <th>Làm sạch</th>
+                      <th>Phân tích</th>
+                      <th>Bilingual Prep</th>
+                      <th>Dịch AI (%)</th>
+                      <th>QA / Review</th>
+                      <th>Archive</th>
+                    </tr>
+                  </thead>
+                  <tbody id="chapters-list-body">
+                    <tr>
+                      <td colspan="8" class="text-center py-4">Vui lòng chọn một cuốn sách ở góc phải.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Onboarding new book -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Onboard Sách Mới (OpenStax)</h3>
+            </div>
+            <div class="card-body">
+              <form id="onboard-form" class="custom-form">
+                <div class="form-group">
+                  <label for="onboard-book-name">Mã định danh sách (Slug):</label>
+                  <input type="text" id="onboard-book-name" placeholder="Ví dụ: college-physics" required>
+                  <small>Đặt tên viết liền không dấu, dùng gạch nối.</small>
+                </div>
+                <div class="form-group">
+                  <label for="onboard-start-url">URL Trang Mục Lục / Bắt đầu:</label>
+                  <input type="url" id="onboard-start-url" placeholder="https://openstax.org/books/..." required>
+                  <small>Dùng link OpenStax chính thức.</small>
+                </div>
+                <div class="form-group">
+                  <label for="onboard-glossary">Tệp Từ Điển (glossary.csv):</label>
+                  <input type="file" id="onboard-glossary" accept=".csv" required>
+                  <small>Bắt buộc phải tải lên tệp glossary.csv tương ứng của sách.</small>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="btn-onboard">
+                  <span>🥖 Bắt đầu Onboarding (Scrape)</span>
+                </button>
+              </form>
+
+              <!-- Console Output inside Card -->
+              <div class="console-box hidden" id="onboard-console-container">
+                <div class="console-header">
+                  <span>Tiến trình Scrape & Clean</span>
+                  <span class="pulse-indicator"></span>
+                </div>
+                <pre class="console-log" id="onboard-log-output"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TRANSLATION -->
+      <section id="translate-tab" class="tab-panel">
+        <div class="translation-grid">
+          <!-- Configuration: Antigravity -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🤖 Dịch với Antigravity AI</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-alert">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                <div>
+                  <strong>Dùng Credit Antigravity:</strong> Không cần API Key. Antigravity thực thi dịch trực tiếp qua IDE.
+                </div>
+              </div>
+
+              <div class="form-group mt-4">
+                <label>Chọn các chương cần dịch:</label>
+                <div class="chapters-checkbox-list" id="translation-chapters-list">
+                  <p class="text-muted">Chọn sách trước để load danh sách chương...</p>
+                </div>
+              </div>
+
+              <div class="form-group mt-3" style="margin-bottom: 16px;">
+                <label class="checkbox-label" style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.9rem; font-weight: normal; color: var(--text-secondary);">
+                  <input type="checkbox" id="chk-api-fallback" checked style="margin-top: 3px; cursor: pointer;">
+                  <span>Tự động chuyển sang API nếu Antigravity hết quota / dừng hoạt động</span>
+                </label>
+              </div>
+
+              <button class="btn btn-primary btn-block" id="btn-create-session">
+                ⚡ Tạo Phiên Dịch (Translation Session)
+              </button>
+            </div>
+          </div>
+
+          <!-- Configuration: API (OpenRouter/DeepSeek) -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🌐 Dịch qua API (OpenRouter)</h3>
+              <span class="badge badge-info" id="api-key-badge">Chưa có key</span>
+            </div>
+            <div class="card-body">
+              <div class="info-alert" style="background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.3)">
+                <svg viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z"/></svg>
+                <div>
+                  Dùng khi <strong>Antigravity hết quota</strong>. Gọi thẳng API DeepSeek/OpenRouter — tự động, không cần IDE.
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <label for="api-key-input">OpenRouter API Key:</label>
+                <div style="display:flex;gap:8px">
+                  <input type="password" id="api-key-input" class="form-control" placeholder="sk-or-v1-..." style="flex:1;font-family:monospace">
+                  <button class="btn btn-secondary" id="btn-toggle-key" title="Hiện/Ẩn key" style="padding:0 12px">👁</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="api-model-select">Model:</label>
+                <select id="api-model-select" class="form-control">
+                  <option value="deepseek/deepseek-chat-v3-5:free">DeepSeek V3.5 (Free)</option>
+                  <option value="deepseek/deepseek-chat">DeepSeek V3 (Paid)</option>
+                  <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Free)</option>
+                  <option value="deepseek/deepseek-prover-v2:free">DeepSeek Prover V2 (Free)</option>
+                  <option value="google/gemini-flash-1.5">Gemini Flash 1.5</option>
+                  <option value="anthropic/claude-haiku-3">Claude Haiku 3</option>
+                </select>
+              </div>
+
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-secondary" id="btn-save-api-config" style="flex:1">
+                  💾 Lưu cấu hình
+                </button>
+                <button class="btn btn-primary" id="btn-run-api-translate" style="flex:1">
+                  🚀 Chạy dịch qua API
+                </button>
+              </div>
+
+              <div class="console-box mt-3" id="api-log-box" style="display:none">
+                <div class="console-header">
+                  <span>API Translation Log</span>
+                  <span class="pulse-indicator" id="api-pulse"></span>
+                </div>
+                <pre class="console-log" id="api-log-console" style="max-height:200px"></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session View & Console -->
+          <div class="card col-2">
+            <div class="card-header">
+              <h3>Phiên Dịch Hiện Tại (Active Session)</h3>
+              <span class="badge badge-warning" id="session-global-status">Ngoại tuyến</span>
+            </div>
+            <div class="card-body">
+              <div id="no-active-session" class="text-center py-5">
+                <p class="text-muted">Chưa có phiên dịch nào được kích hoạt.</p>
+                <p class="text-muted small">Hãy chọn chương và bấm nút tạo ở cột bên trái.</p>
+              </div>
+
+              <div id="active-session-container" class="hidden">
+                <div class="session-instruction">
+                  <h4>📢 HƯỚNG DẪN KÍCH HOẠT DỊCH THUẬT AI</h4>
+                  <p>Phiên dịch đã được ghi nhận thành công! Bây giờ bạn hãy gõ nội dung sau vào khung chat của <strong>Antigravity</strong> trong IDE:</p>
+                  <div class="copy-command-box">
+                    <code id="agent-chat-command">Hãy dịch session hiện tại</code>
+                    <button class="btn-copy" id="btn-copy-command">Copy</button>
+                  </div>
+                  <p class="small text-muted mt-2">💡 Bạn có thể dùng kèm lệnh <code>/goal</code> để Antigravity chạy kỹ hơn: <code>/goal Hãy dịch session hiện tại</code>.</p>
+                </div>
+
+                <!-- Session Summary Stats -->
+                <div class="session-summary-stats mt-4" id="session-summary-stats">
+                  <div class="stat-box">
+                    <span class="stat-label">📁 Files đã dịch</span>
+                    <span class="stat-value" id="stat-files-done">0 / 0</span>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">📊 Tiến độ</span>
+                    <span class="stat-value" id="stat-percent">0%</span>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">🔖 Trạng thái</span>
+                    <span class="stat-value" id="stat-status-text">—</span>
+                  </div>
+                </div>
+
+                <!-- Agent Last Log Summary -->
+                <div class="agent-last-log mt-3" id="agent-last-log-box" style="display:none">
+                  <div class="agent-log-label">📝 Tóm tắt lần cuối Agent báo cáo:</div>
+                  <div class="agent-log-content" id="agent-last-log-text"></div>
+                </div>
+
+                <!-- QA Pending Alert -->
+                <div class="qa-pending-alert mt-3" id="qa-pending-alert" style="display:none">
+                  <div class="qa-alert-icon">⚠️</div>
+                  <div class="qa-alert-body">
+                    <strong id="qa-alert-title">Có lỗi QA cần xử lý!</strong>
+                    <p id="qa-alert-desc" class="small"></p>
+                  </div>
+                  <button class="btn btn-sm btn-qa-fix" id="btn-go-to-qa">Sửa ngay →</button>
+                </div>
+
+                <div class="session-progress-section mt-4">
+                  <h4>Tiến Độ Dịch Sách</h4>
+                  <div id="session-files-list">
+                    <!-- Progress list of files -->
+                  </div>
+                </div>
+
+                <!-- Agent Logs Console -->
+                <div class="console-box mt-4">
+                  <div class="console-header">
+                    <span>Logs Trạng Thái từ Agent</span>
+                    <span class="pulse-indicator" id="session-pulse" style="display:none"></span>
+                  </div>
+                  <pre class="console-log" id="agent-session-logs">Đang chờ Agent Antigravity đọc active_session.json và bắt đầu dịch...</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: READER & QA -->
+      <section id="qa-tab" class="tab-panel">
+        <!-- Split View Layout -->
+        <div class="split-view">
+                <!-- Left side: Book Reader Iframe -->
+          <div class="split-left card" id="reader-card">
+            <div class="card-header py-2" style="min-height: 50px;">
+              <div class="reader-controls">
+                <select id="reader-chapter-select">
+                  <option value="">Chọn chương đọc...</option>
+                </select>
+                <select id="reader-page-select" style="display:none">
+                  <option value="">-- Chọn trang --</option>
+                </select>
+                <span class="reader-file-path" id="reader-active-file-label">index.html</span>
+              </div>
+              <div class="reader-header-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-rebuild-preview-reader" title="Rebuild book preview">🔄 Rebuild</button>
+                <button class="btn btn-secondary btn-sm" id="btn-open-new-tab" title="Mở trang hiện tại trong tab mới">
+                  <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;vertical-align:middle"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                  Tab mới
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-fullscreen-reader" title="Phóng to màn hình đọc sách">
+                  <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;vertical-align:middle"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                  Phóng to
+                </button>
+              </div>
+            </div>
+            <div class="reader-iframe-wrapper">
+              <iframe id="book-reader-iframe" src="about:blank"></iframe>
+            </div>
+          </div>
+
+          <!-- Right side: QA Panel -->
+          <div class="split-right card">
+            <div class="card-header py-2" style="min-height: 50px;">
+              <h3>Phản Biện QA (Bản Dịch Hiện Tại)</h3>
+              <span class="badge badge-info" id="qa-issues-count">0 Lỗi</span>
+            </div>
+            <div class="card-body qa-panel-body">
+              <div id="qa-no-issues" class="text-center py-5">
+                <p class="text-muted">Không tìm thấy lỗi QA cho trang này.</p>
+                <small class="text-muted">Đảm bảo trang này đã được review và có file trong thư mục `06-reviews/`.</small>
+              </div>
+
+              <!-- List of QA issues -->
+              <div id="qa-issues-list" class="qa-issues-list">
+                <!-- Dynamic QA item cards -->
+              </div>
+
+              <div class="qa-footer-actions mt-4 hidden" id="qa-actions-bar">
+                <button class="btn btn-success btn-block" id="btn-apply-qa-patches">
+                  🔨 ÁP DỤNG BẢN VÁ (PATCH HTML & REFRESH)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: PUBLISH -->
+      <section id="publish-tab" class="tab-panel">
+        <div class="publish-grid">
+          <div class="card col-2">
+            <div class="card-header">
+              <h3>Đóng Gói & Xuất Bản</h3>
+            </div>
+            <div class="card-body">
+              <p>Quy trình xuất bản sẽ chạy script `build-preview.py` để đóng gói bản dịch sạch (loại bỏ toàn bộ phần text tiếng Anh `eng hidden` dự phòng) và sao chép vào đúng thư mục của sách trong repository **`Liberian-Book/web-site`**.</p>
+              
+              <div class="publish-actions mt-4">
+                <button class="btn btn-primary" id="btn-run-publish">
+                  📦 ĐÓNG GÓI & EXPORT SANG WEB-SITE
+                </button>
+              </div>
+
+              <div class="console-box mt-4">
+                <div class="console-header">
+                  <span>Nhật Ký Đóng Gói (Build Logs)</span>
+                </div>
+                <pre class="console-log" id="publish-build-logs">Nhấn nút "ĐÓNG GÓI" để bắt đầu build...</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Đồng Bộ GitHub (Git Sync)</h3>
+              <span class="badge" id="git-repo-badge">web-site</span>
+            </div>
+            <div class="card-body">
+              <div class="git-status-section">
+                <h4>Trạng Thái File Đổi (Git Status)</h4>
+                <pre class="console-log" style="height: 120px; font-size: 0.85rem;" id="git-status-output">Đang kiểm tra Git Status...</pre>
+                <button class="btn btn-secondary btn-sm mt-2" id="btn-refresh-git-status">Làm mới trạng thái</button>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="git-push-section">
+                <h4>Đẩy Lên GitHub</h4>
+                <div class="form-group">
+                  <label for="git-commit-msg">Commit Message:</label>
+                  <input type="text" id="git-commit-msg" placeholder="Ví dụ: Dịch hoàn thành chương 5 sách Entrepreneurship">
+                </div>
+                <button class="btn btn-success btn-block" id="btn-git-push">
+                  🚀 COMMIT & PUSH LÊN GITHUB
+                </button>
+              </div>
+
+              <div class="console-box mt-4 hidden" id="git-push-console-container">
+                <div class="console-header">
+                  <span>Git Push Stream</span>
+                </div>
+                <pre class="console-log" id="git-push-logs"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

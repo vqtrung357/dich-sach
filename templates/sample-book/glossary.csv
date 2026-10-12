@@ -1,0 +1,11 @@
+id,key,translation,category,context_note
+1,entrepreneur,nhà khởi nghiệp,core,Tránh dịch máy móc thành thương gia
+2,entrepreneurship,khởi nghiệp,core,Không dùng "sự khởi nghiệp"
+3,venture,dự án khởi nghiệp,core,Hoặc doanh nghiệp khởi nghiệp
+4,small business owner,chủ doanh nghiệp nhỏ,core,Phân biệt với entrepreneur
+5,disruptive technology,công nghệ đột phá,tech,
+6,mindset,tư duy,psychology,Ví dụ: tư duy khởi nghiệp
+7,stakeholder,bên liên quan,management,
+8,corporate social responsibility,trách nhiệm xã hội của doanh nghiệp,management,Viết tắt CSR
+9,supply chain,chuỗi cung ứng,management,
+10,cash flow,dòng tiền,finance,

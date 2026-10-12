@@ -1,0 +1,13 @@
+{
+  "book": "psychology-2e",
+  "status": "completed",
+  "totalChapters": 16,
+  "totalPages": 185,
+  "completedPages": 185,
+  "logs": [
+    "[15:33:00] 🏆 HOÀN THÀNH 100% BẢN DỊCH TOÀN BỘ CUỐN SÁCH PSYCHOLOGY 2E (OPENSTAX)!",
+    "[15:33:00] 🤖 Đã dịch 185 trang qua OpenAI Direct API (Model: gpt-6-luna) với 0 lỗi thất bại",
+    "[15:33:00] 🛡️ 100% tệp vượt qua Universal QA Gate: 0 ký tự ngoại lai, 100% Vietnamese Sentence Case",
+    "[15:33:00] 🌐 Đã đồng bộ toàn bộ 185 trang sang liberosis-review/frontend và web-site"
+  ]
+}

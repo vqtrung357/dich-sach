@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo Cáo Rà Soát Lỗi Bản Dịch - BỘT Audit Report</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Calibri', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .header-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #ffffff;
+      border-bottom: 1px solid #cbd5e1;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .live-badge {
+      font-size: 0.75rem;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-md { background: #0f766e; color: white; }
+    .btn-md:hover { background: #0d9488; }
+    .btn-docx { background: #1d4ed8; color: white; }
+    .btn-docx:hover { background: #2563eb; }
+    .btn-copy { background: #0284c7; color: white; }
+    .btn-copy:hover { background: #0369a1; }
+    .btn-add { background: #475569; color: white; }
+    .btn-add:hover { background: #334155; }
+
+    .doc-container {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 40px 48px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      min-height: 80vh;
+    }
+
+    .doc-chapter-title {
+      color: #b91c1c;
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .doc-meta {
+      font-size: 0.9rem;
+      color: #475569;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+
+    table.audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.92rem;
+    }
+
+    table.audit-table th {
+      background-color: #ffffff;
+      color: #0f172a;
+      border: 1px solid #475569;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    table.audit-table td {
+      border: 1px solid #64748b;
+      padding: 10px 12px;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    table.audit-table td[contenteditable="true"]:hover {
+      outline: 2px solid #2563eb;
+      background-color: #eff6ff;
+    }
+
+    table.audit-table td[contenteditable="true"]:focus {
+      outline: 2px solid #2563eb;
+      background-color: #ffffff;
+    }
+
+    .row-delete-btn {
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    tr:hover .row-delete-btn { opacity: 1; }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div class="header-title">
+      <h2>📋 BẢNG BÁO CÁO AUDIT RÀ SOÁT LỖI BẢN DỊCH</h2>
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        TỰ ĐỘNG CẬP NHẬT REALTIME
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button id="btn-add-row" class="btn btn-add">➕ Thêm Dòng</button>
+      <button id="btn-copy-md" class="btn btn-copy">📋 Copy Markdown</button>
+      <button id="btn-export-md" class="btn btn-md">📄 Tải File .MD</button>
+      <button id="btn-export-docx" class="btn btn-docx">📝 Tải File .DOCX</button>
+    </div>
+  </div>
+
+  <div class="doc-container">
+    <h1 id="chapter-heading" class="doc-chapter-title">Chương - Báo Cáo Rà Soát Lỗi</h1>
+    <div class="doc-meta" id="doc-meta-info">
+      Đang tải thông tin sách và trang...
+    </div>
+
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th style="width: 5%; text-align: center;">Stt</th>
+          <th style="width: 20%;">Đoạn/Mục</th>
+          <th style="width: 15%;">Loại lỗi</th>
+          <th style="width: 25%;">Đoạn cần sửa</th>
+          <th style="width: 18%;">Đề nghị sửa thành</th>
+          <th style="width: 17%;">Lý do</th>
+          <th style="width: 4%;"></th>
+        </tr>
+      </thead>
+      <tbody id="audit-table-body">
+        <!-- Rows rendered live -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get('bookId') || 'book';
+    const pageId = urlParams.get('pageId') || 'page';
+    const paramChapterId = urlParams.get('chapterId') || '';
+
+    function extractChapterInfo(book, page, paramChap) {
+      let rawChap = paramChap || '';
+      if (!rawChap && page) {
+        if (page.includes('/')) {
+          rawChap = page.split('/')[0];
+        } else {
+          const match = page.match(/^(\d+)-/) || page.match(/^ch(\d+)/i) || page.match(/chapter[_-]?(\d+)/i);
+          if (match) {
+            rawChap = `chapter-${match[1]}`;
+          } else {
+            rawChap = page;
+          }
+        }
+      }
+      if (!rawChap) rawChap = 'chapter-1';
+
+      let chapterNum = '';
+      const match = rawChap.match(/chapter[_-]?(\d+)/i) || rawChap.match(/^ch(\d+)/i) || rawChap.match(/(\d+)/);
+      if (match) {
+        chapterNum = match[1];
+      }
+
+      const chapterTitle = chapterNum ? `Chương ${chapterNum}` : (rawChap.charAt(0).toUpperCase() + rawChap.slice(1));
+      return { chapterId: rawChap, chapterNum, chapterTitle };
+    }
+
+    const chapterInfo = extractChapterInfo(bookId, pageId, paramChapterId);
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function cleanReasonText(str) {
+      if (str === undefined || str === null) return '';
+      return String(str).replace(/^\[[^\]]+\]\s*/, '').trim();
+    }
+
+    function getChapterComments() {
+      const allComments = [];
+      const prefix = `bot_comments_${bookId}_`;
+      const targetChap = chapterInfo.chapterId.toLowerCase();
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(prefix)) {
+          const pagePath = key.substring(prefix.length).toLowerCase();
+          const pageChapter = pagePath.includes('/') ? pagePath.split('/')[0] : pagePath;
+
+          if (pageChapter === targetChap || pagePath.startsWith(targetChap + '/') || pagePath.startsWith(targetChap)) {
+            try {
+              const list = JSON.parse(localStorage.getItem(key));
+              if (Array.isArray(list)) {
+                list.forEach(c => {
+                  c._pageKey = key;
+                  allComments.push(c);
+                });
+              }
+            } catch(e) {}
+          }
+        }
+      }
+
+      // Deduplicate by comment id
+      const map = new Map();
+      allComments.forEach(c => {
+        if (!map.has(c.id)) {
+          map.set(c.id, c);
+        }
+      });
+
+      return Array.from(map.values()).sort((a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0));
+    }
+
+    function renderTable() {
+      const comments = getChapterComments();
+      const tbody = document.getElementById('audit-table-body');
+      const heading = document.getElementById('chapter-heading');
+      const meta = document.getElementById('doc-meta-info');
+
+      heading.textContent = `Báo Cáo Rà Soát - ${bookId.toUpperCase()}`;
+      meta.innerHTML = `<b>Chương:</b> ${escapeHtml(chapterInfo.chapterTitle)} &nbsp;|&nbsp; <b>Tổng số lỗi:</b> ${comments.length} &nbsp;|&nbsp; <b>Thời gian:</b> ${new Date().toLocaleDateString('vi-VN')}`;
+
+      tbody.innerHTML = '';
+
+      if (comments.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-state">Chưa có dữ liệu phản biện rà soát nào cho ${escapeHtml(chapterInfo.chapterTitle)}. Bôi đen văn bản trong ứng dụng đọc để thêm phản biện!</td></tr>`;
+        return;
+      }
+
+      comments.forEach((c, idx) => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-id', c.id);
+
+        const targetText = c.targetText || c.selectedText || '';
+        const suggestedText = c.suggestedText || '';
+        const reasonText = cleanReasonText(c.reason !== undefined && c.reason !== null && c.reason !== '' ? c.reason : (c.reason === '' ? '' : (c.text || '')));
+        const errorType = c.errorType || 'Lỗi dịch';
+        const locationContext = c.locationContext || c.blockId || 'Mục';
+
+        tr.innerHTML = `
+          <td style="text-align: center; font-weight: bold;">${idx + 1}</td>
+          <td contenteditable="true" data-field="locationContext">${escapeHtml(locationContext)}</td>
+          <td contenteditable="true" data-field="errorType" style="color: #b91c1c; font-weight: bold;">${escapeHtml(errorType)}</td>
+          <td contenteditable="true" data-field="targetText">${escapeHtml(targetText)}</td>
+          <td contenteditable="true" data-field="suggestedText" style="font-weight: bold;">${escapeHtml(suggestedText)}</td>
+          <td contenteditable="true" data-field="reason">${escapeHtml(reasonText)}</td>
+          <td style="text-align: center;">
+            <button class="row-delete-btn" title="Xóa dòng này">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Cell Editing Listener
+      tbody.querySelectorAll('td[contenteditable="true"]').forEach(cell => {
+        cell.addEventListener('blur', () => {
+          const tr = cell.closest('tr');
+          const id = tr.getAttribute('data-id');
+          const field = cell.getAttribute('data-field');
+          const newValue = cell.textContent.trim();
+
+          const comments = getChapterComments();
+          const targetComment = comments.find(c => c.id === id);
+          if (targetComment && targetComment._pageKey) {
+            try {
+              let pageComments = JSON.parse(localStorage.getItem(targetComment._pageKey)) || [];
+              const itemIdx = pageComments.findIndex(c => c.id === id);
+              if (itemIdx !== -1) {
+                pageComments[itemIdx][field] = newValue;
+                localStorage.setItem(targetComment._pageKey, JSON.stringify(pageComments));
+              }
+            } catch(e) {}
+          }
+        });
+      });
+
+      // Row Deletion Listener
+      tbody.querySelectorAll('.row-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tr = btn.closest('tr');
+          const id = tr.getAttribute('data-id');
+          if (confirm('Xóa dòng phản biện này khỏi báo cáo chương?')) {
+            const comments = getChapterComments();
+            const targetComment = comments.find(c => c.id === id);
+            if (targetComment && targetComment._pageKey) {
+              try {
+                let pageComments = JSON.parse(localStorage.getItem(targetComment._pageKey)) || [];
+                pageComments = pageComments.filter(c => c.id !== id);
+                localStorage.setItem(targetComment._pageKey, JSON.stringify(pageComments));
+              } catch(e) {}
+            }
+            renderTable();
+          }
+        });
+      });
+    }
+
+    // Add Manual Row
+    document.getElementById('btn-add-row').addEventListener('click', () => {
+      const defaultPageKey = `bot_comments_${bookId}_${pageId}`;
+      let pageComments = [];
+      try {
+        pageComments = JSON.parse(localStorage.getItem(defaultPageKey)) || [];
+      } catch(e) {}
+
+      const newComment = {
+        id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+        bookId,
+        pageId,
+        blockId: 'Mục mới',
+        locationContext: `${chapterInfo.chapterTitle} > Mục mới`,
+        errorType: 'Lỗi dịch',
+        targetText: 'Đoạn cần sửa...',
+        suggestedText: 'Đề nghị sửa...',
+        reason: 'Lý do sửa...',
+        timestamp: new Date().toISOString()
+      };
+      pageComments.unshift(newComment);
+      localStorage.setItem(defaultPageKey, JSON.stringify(pageComments));
+      renderTable();
+    });
+
+    // Copy Markdown Table
+    document.getElementById('btn-copy-md').addEventListener('click', () => {
+      const comments = getChapterComments();
+      if (comments.length === 0) return alert('Chưa có dữ liệu!');
+      let md = `| STT | Đoạn/Mục | Loại lỗi | Đoạn cần sửa | Đề nghị sửa thành | Lý do |\n|---|---|---|---|---|---|\n`;
+      comments.forEach((c, idx) => {
+        const target = (c.targetText || c.selectedText || '').replace(/\n/g, ' ').replace(/\|/g, '\\|');
+        const suggest = (c.suggestedText || '').replace(/\n/g, ' ').replace(/\|/g, '\\|');
+        const reason = cleanReasonText(c.reason !== undefined && c.reason !== null && c.reason !== '' ? c.reason : (c.reason === '' ? '' : (c.text || ''))).replace(/\n/g, ' ').replace(/\|/g, '\\|');
+        const loc = (c.locationContext || c.blockId || 'Mục').replace(/\|/g, '\\|');
+        const err = (c.errorType || 'Lỗi dịch').replace(/\|/g, '\\|');
+
+        md += `| ${idx + 1} | ${loc} | ${err} | ${target} | ${suggest} | ${reason} |\n`;
+      });
+      navigator.clipboard.writeText(md).then(() => alert('✅ Đã copy bảng Markdown vào bộ nhớ tạm!'));
+    });
+
+    // Export .MD
+    document.getElementById('btn-export-md').addEventListener('click', () => {
+      const comments = getChapterComments();
+      if (comments.length === 0) return alert('Chưa có dữ liệu!');
+      let md = `# 📋 Báo Cáo Rà Soát Lỗi Bản Dịch (${bookId.toUpperCase()} - ${chapterInfo.chapterTitle.toUpperCase()})\n\n`;
+      md += `- **Sách**: \`${bookId}\`\n- **Chương**: \`${chapterInfo.chapterTitle}\`\n\n`;
+      md += `| STT | Đoạn/Mục | Loại lỗi | Đoạn cần sửa | Đề nghị sửa thành | Lý do |\n|---|---|---|---|---|---|\n`;
+      comments.forEach((c, idx) => {
+        const target = (c.targetText || c.selectedText || '').replace(/\n/g, ' ').replace(/\|/g, '\\|');
+        const suggest = (c.suggestedText || '').replace(/\n/g, ' ').replace(/\|/g, '\\|');
+        const reason = cleanReasonText(c.reason !== undefined && c.reason !== null && c.reason !== '' ? c.reason : (c.reason === '' ? '' : (c.text || ''))).replace(/\n/g, ' ').replace(/\|/g, '\\|');
+        const loc = (c.locationContext || c.blockId || 'Mục').replace(/\|/g, '\\|');
+        const err = (c.errorType || 'Lỗi dịch').replace(/\|/g, '\\|');
+
+        md += `| ${idx + 1} | ${loc} | ${err} | ${target} | ${suggest} | ${reason} |\n`;
+      });
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      const filenameStr = chapterInfo.chapterNum ? `Chuong${chapterInfo.chapterNum}` : chapterInfo.chapterId;
+      a.download = `${filenameStr}_ra_soat_loi_${bookId}.md`;
+      a.click();
+    });
+
+    // Export .DOCX
+    document.getElementById('btn-export-docx').addEventListener('click', () => {
+      const comments = getChapterComments();
+      if (comments.length === 0) return alert('Chưa có dữ liệu!');
+      const rowsHtml = comments.map((c, idx) => `
+        <tr>
+          <td style="text-align: center; font-weight: bold;">${idx + 1}</td>
+          <td><b>${escapeHtml(c.locationContext || c.blockId || '')}</b></td>
+          <td><span style="color: #b91c1c; font-weight: bold;">${escapeHtml(c.errorType || 'Lỗi dịch')}</span></td>
+          <td>${escapeHtml(c.targetText || c.selectedText || '')}</td>
+          <td><b>${escapeHtml(c.suggestedText || '')}</b></td>
+          <td>${escapeHtml(cleanReasonText(c.reason !== undefined && c.reason !== null && c.reason !== '' ? c.reason : (c.reason === '' ? '' : (c.text || ''))))}</td>
+        </tr>
+      `).join('');
+
+      const docHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset='utf-8'>
+          <title>Báo cáo rà soát lỗi ${escapeHtml(chapterInfo.chapterTitle)}</title>
+          <style>
+            body { font-family: 'Calibri', Arial, sans-serif; font-size: 11pt; }
+            h1 { font-size: 18pt; color: #b91c1c; margin-bottom: 4pt; }
+            h2 { font-size: 14pt; color: #1e3a8a; margin-top: 0; margin-bottom: 12pt; }
+            table { border-collapse: collapse; width: 100%; margin-top: 12pt; }
+            th { border: 1px solid #000; padding: 6pt; background-color: #ffffff; text-align: left; font-weight: bold; }
+            td { border: 1px solid #000; padding: 6pt; vertical-align: top; }
+          </style>
+        </head>
+        <body>
+          <h1>SÁCH: ${escapeHtml(bookId.toUpperCase())}</h1>
+          <h2>BÁO CÁO RÀ SOÁT - ${escapeHtml(chapterInfo.chapterTitle.toUpperCase())}</h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 5%;">Stt</th>
+                <th style="width: 20%;">Đoạn/Mục</th>
+                <th style="width: 15%;">Loại lỗi</th>
+                <th style="width: 25%;">Đoạn cần sửa</th>
+                <th style="width: 20%;">Đề nghị sửa thành</th>
+                <th style="width: 15%;">Lý do</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+      const blob = new Blob(['\ufeff', docHtml], { type: 'application/msword' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      const filenameStr = chapterInfo.chapterNum ? `Chuong${chapterInfo.chapterNum}` : chapterInfo.chapterId;
+      a.download = `${filenameStr}_ra_soat_loi_${bookId}.docx`;
+      a.click();
+    });
+
+    // Listen for Realtime LocalStorage Sync Events
+    window.addEventListener('storage', (e) => {
+      if (e.key && e.key.startsWith(`bot_comments_${bookId}_`)) {
+        renderTable();
+      }
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>

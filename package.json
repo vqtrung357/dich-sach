@@ -1,0 +1,37 @@
+{
+  "name": "dich-sach",
+  "version": "1.0.0",
+  "description": "Hệ thống quy trình dịch sách giáo trình OpenStax sang tiếng Việt bằng AI & Agent Pipeline chuẩn học thuật",
+  "main": "pipeline/run_pipeline.js",
+  "scripts": {
+    "start": "node dashboard/server.js",
+    "dashboard": "node dashboard/server.js",
+    "pipeline": "node pipeline/run_pipeline.js",
+    "export:pdf": "node pipeline/export_pdf.js",
+    "step1:scrape": "node pipeline/step1_scrape.js",
+    "step2:clean": "node pipeline/step2_cleanup.js",
+    "step3:prep": "node pipeline/step3_prepare.js",
+    "step4:translate": "python3 pipeline/step4_translate.py",
+    "step5:review": "python3 pipeline/step5_review.py",
+    "step6:archive": "node pipeline/step6_archive.js"
+  },
+  "keywords": [
+    "openstax",
+    "book-translation",
+    "ai-agents",
+    "vietnamese",
+    "nlp",
+    "llm",
+    "education"
+  ],
+  "author": "vqtrung357",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "puppeteer": "^22.12.1"
+  }
+}
