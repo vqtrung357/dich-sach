@@ -72,12 +72,18 @@ Chế độ:  ${params.dryRun ? 'Dry Run (Thử nghiệm offline)' : 'Trực ti�
     '2': () => runCommand('Bước 2: Làm sạch HTML (Loại bỏ rác và thanh điều hướng)', `node "${path.join(pipelineDir, 'step2_cleanup.js')}" --book "${params.book}" --chapter "${params.chapter}"`),
     '3': () => runCommand('Bước 3: Chuẩn bị cấu trúc song ngữ (eng hidden / vn visible)', `node "${path.join(pipelineDir, 'step3_prepare.js')}" --book "${params.book}" --chapter "${params.chapter}"`),
     '4': () => {
-      let cmd = `python3 "${path.join(pipelineDir, 'step4_translate.py')}" --book "${params.book}" --chapter "${params.chapter}"`;
+      const script = params.python ? 'step4_translate.py' : 'step4_translate.js';
+      const runner = params.python ? 'python3' : 'node';
+      let cmd = `${runner} "${path.join(pipelineDir, script)}" --book "${params.book}" --chapter "${params.chapter}"`;
       if (params.dryRun) cmd += ' --dry-run';
       if (params.model) cmd += ` --model "${params.model}"`;
       return runCommand('Bước 4: Dịch thuật ngữ cảnh bằng AI & Bảng thuật ngữ', cmd);
     },
-    '5': () => runCommand('Bước 5: Kiểm tra tính toàn vẹn và đối chiếu thuật ngữ (QA)', `python3 "${path.join(pipelineDir, 'step5_review.py')}" --book "${params.book}" --chapter "${params.chapter}"`),
+    '5': () => {
+      const script = params.python ? 'step5_review.py' : 'step5_review.js';
+      const runner = params.python ? 'python3' : 'node';
+      return runCommand('Bước 5: Kiểm tra tính toàn vẹn và đối chiếu thuật ngữ (QA)', `${runner} "${path.join(pipelineDir, script)}" --book "${params.book}" --chapter "${params.chapter}"`);
+    },
     '6': () => runCommand('Bước 6: Đóng gói bản dịch & Dựng giao diện Book Reader Preview', `node "${path.join(pipelineDir, 'step6_archive.js')}" --book "${params.book}" --chapter "${params.chapter}"`),
     'pdf': () => runCommand('Bước Xuất Bản: Tạo file PDF sách chuẩn in ấn qua Chrome Headless', `node "${path.join(pipelineDir, 'export_pdf.js')}" --book="${params.book}" --chapter=${params.chapter}`)
   };
